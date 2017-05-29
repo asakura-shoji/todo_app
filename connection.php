@@ -21,4 +21,16 @@ function insertDb($data) {
   //PDO::PARAM_STR は「文字列」
   $stmt->execute();
 }
+
+//データ全件取得の記述
+function selectAll() {
+  $dbh = connectPdo();
+  $sql = 'SELECT * FROM todos WHERE deleted_at IS NULL';//データの取得
+  $todo =array();
+  foreach($dbh->query($sql) as $row) {//配列を作成
+    array_push($todo, $row);//配列の最後に追加
+  }
+  return $todo;//制作した＄todoを返す。
+}
+
  ?>
