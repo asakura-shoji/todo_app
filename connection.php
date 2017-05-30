@@ -12,6 +12,7 @@ function connectPdo() {
   }
 }
 
+//新規作成の為の記述
 function insertDb($data) {
   $dbh = connectPdo();
   $sql = 'INSERT INTO todos (todo) VALUES (:todo)';
@@ -32,5 +33,33 @@ function selectAll() {
   }
   return $todo;//制作した＄todoを返す。
 }
+
+//更新処理
+function updateDb($id, $data) {
+  $dbh = connectPdo();
+  $sql = 'UPDATE todos SET todo = :todo WHERE id = :id';//更新
+  //WHEREの後に条件式で指定したものだけを選出できる
+  //UPDATE table名 SET カラム名 = 格納する値 where カラム名 = 値
+  $stmt = $dbh->prepare($sql);
+  $stmt->bindParam(':todo', $data, PDO::PARAM_STR);
+  //bindParam - 第一引数に文字列(:todo)、第二引数に値、第三引数に型(PDO(保存対象データの型))
+  $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
+  $stmt->execute();
+}
+
+//更新対象の保存データの取得
+function getSelectData($id) {
+  $dbh = connectPdo();
+  $sql = 'SELECT todo FROM todos WHERE id = :id AND deleted_at IS NULL';
+  //deleted_atの値がnullでない項目を含めるように指定
+  //削除しているかどうかも条件に入れている。
+  $stmt = $dbh->prepare($sql);
+  $stmt->execute(array(':id' => (int)$id));
+  //「execute」メソッドを実行するSQL文に引数があった場合(後で値を指定するために「?」や名前付きパラメータを
+  //指定した場合)、「execute」メソッドの引数に、値を配列の形で指定します。
+  $data = $stmt->fetch();//fetch - 結果セットから次の行を取得する
+  return $data['todo'];
+}
+
 
  ?>
