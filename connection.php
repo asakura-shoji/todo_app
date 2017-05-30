@@ -6,24 +6,24 @@ require_once('config.php');
 function connectPdo() {
   try{//try節の中には、例外が発生する可能性がある正常系処理のコードを記述します。
     return new PDO(DSN,DB_USER,DB_PASSWORD);
-  } catch (PDOException $e) {//Exception でなければFatal Errorがでる。
+  } catch (PDOException $e) {//PDOException - エラーを投げる　
     //catch節の「（）」には、第一引数に、try節で発生した例外をcatchする例外クラス名を指定します。
     //第二引数には、catchした例外クラスのインスタンスを代入する変数を指定します。
     echo $e->getMessage();
-    exit;
+    exit;//exit メッセージを出力し、現在のスクリプトを終了
   }
 }
 
 //新規作成の為の記述
 function insertDb($data) {
   $dbh = connectPdo();
-  $sql = 'INSERT INTO todos (todo) VALUES (:todo)';
-  //INSERT INTO - テーブルにデータを追加する
-  $stmt = $dbh->prepare($sql);
+  $sql = 'INSERT INTO todos (todo) VALUES (:todo)';//INSERT INTO - テーブルにデータを追加する
+  //プリペアドステートメント - 実行したい SQL をコンパイルした 一種のテンプレートのようなも
+  $stmt = $dbh->prepare($sql);//値部分にパラメータを付けて実行待ち
   $stmt->bindParam(':todo', $data, PDO::PARAM_STR);
   //bindParam - 一個目はパラメータを指定。二個目にそれに入れる変数。三個目に型を指定。
   //PDO::PARAM_STR は「文字列」
-  $stmt->execute();
+  $stmt->execute();//準備したprepareに入っているSQL文を実行
 }
 
 //データ全件取得の記述

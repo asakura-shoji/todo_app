@@ -10,7 +10,6 @@ unsetSession();
   <title>Home</title>
 </head>
 <body>
-  welocome hello world
   <div>
     <a href="new.php">
       <p>新規作成</p>

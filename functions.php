@@ -19,10 +19,10 @@ function setToken() {//setToken - tokenをsessionに保存している
 
 //sessionのチェックを行いcsrf対策を行う
 function checkToken($data) {
-  if (empty($_SESSION['token'])|| ($_SESSION['token'] != $data)){
+  if (empty($_SESSION['token']) || ($_SESSION['token'] != $data)){// ||=or
     $_SESSION['err'] = '不正な操作です';
-    header('location: '.$_SERVER['HTTP_REFERER'].'');
-    exit();
+    header('location: '.$_SERVER['HTTP_REFERER'].'');//header - httpヘッダを送信する
+    exit();//exit - メッセージを出力し、現在のスクリプトを終了する
   }
   return true;
 }
@@ -46,9 +46,9 @@ function index() {
 
 // 更新
 function update($data) {
-  if(checkToken($data['token'])) {
-    updateDb($data['id'], $data['todo']);
-  }
+   if(checkToken($data['token'])){
+     updateDb($data['id'], $data['todo']);
+    }
 }
 //update関数とdetail関数でそれぞれ必要となるデータを渡している
 
@@ -64,15 +64,24 @@ function checkReferer() {
 }
 
 function transition($path) {
+  unsetSession();
   $data = $_POST;
+  if(isset($data['todo'])) $res = validate($data['todo']);//バリデーションの機能
   if($path === '/index.php' && $data['type'] === 'delete'){
     deleteData($data['id']);
     return 'index';
+  }elseif(!$res || !empty($_SESSION['err'])){//empty - 変数が空であるかどうかを検査します
+    return 'back';
   }elseif($path === '/new.php'){
     create($data);
   }elseif($path === '/edit.php'){
     update($data);
   }
+}
+
+//バリデーションの機能
+function validate($data) {
+  return $res = $data != "" ? true : $_SESSION['err'] = '入力がありません';
 }
 
 function deleteData($id) {
