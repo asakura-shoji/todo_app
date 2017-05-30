@@ -31,11 +31,18 @@ function checkReferer() {
 
 function transition($path) {
   $data = $_POST;
-  if($path === '/new.php'){
+  if($path === '/index.php' && $data['type'] === 'delete'){
+    deleteData($data['id']);
+    return 'index';
+  }elseif($path === '/new.php'){
     create($data);
   }elseif($path === '/edit.php'){
     update($data);
   }
 }
 
- ?>
+function deleteData($id) {
+  deleteDb($id);
+}
+
+?>

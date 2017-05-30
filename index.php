@@ -37,11 +37,11 @@ require('functions.php');
           は、「検索対象となる項目」と「検索キーワード」を指定する必要がある。-->
           </td>
           <td>
-            <from action="store.php" method="POST">
-              <input type="hidden" name="id" value="">
+            <form action="store.php" method="POST">
+              <input type="hidden" name="id" value="<?php echo $todo['id'] ?>">
               <input type="hidden" name="type" value="delete">
               <button type="submit">削除</button>
-            </from>
+            </form>
           </td>
         </tr>
       <?php endforeach; ?>
