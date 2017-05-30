@@ -4,9 +4,11 @@ require_once('config.php');
 
 //DBに接続するための記述
 function connectPdo() {
-  try{
+  try{//try節の中には、例外が発生する可能性がある正常系処理のコードを記述します。
     return new PDO(DSN,DB_USER,DB_PASSWORD);
-  } catch (PDOException $e) {
+  } catch (PDOException $e) {//Exception でなければFatal Errorがでる。
+    //catch節の「（）」には、第一引数に、try節で発生した例外をcatchする例外クラス名を指定します。
+    //第二引数には、catchした例外クラスのインスタンスを代入する変数を指定します。
     echo $e->getMessage();
     exit;
   }
@@ -16,6 +18,7 @@ function connectPdo() {
 function insertDb($data) {
   $dbh = connectPdo();
   $sql = 'INSERT INTO todos (todo) VALUES (:todo)';
+  //INSERT INTO - テーブルにデータを追加する
   $stmt = $dbh->prepare($sql);
   $stmt->bindParam(':todo', $data, PDO::PARAM_STR);
   //bindParam - 一個目はパラメータを指定。二個目にそれに入れる変数。三個目に型を指定。

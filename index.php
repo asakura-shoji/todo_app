@@ -1,7 +1,6 @@
 <?php
-
 require('functions.php');
-
+unsetSession();
 ?>
 
 <!DOCTYPE html>
@@ -27,10 +26,10 @@ require('functions.php');
       </tr>
       <?php foreach(index() as $todo): ?>
         <tr>
-          <td><?php echo $todo['id'] ?></td>
-          <td><?php echo $todo['todo'] ?></td>
+          <td><?php echo h($todo['id']) ?></td><!--htmlspecialchars()のラッパー関数-->
+          <td><?php echo h($todo['todo']) ?></td>
           <td>
-            <a href="edit.php?id=<?php echo $todo['id'] ?>">更新</a><!--編集画面にて更新対象のデータの表示も行える -->
+            <a href="edit.php?id=<?php echo h($todo['id']) ?>">更新</a><!--編集画面にて更新対象のデータの表示も行える -->
           <!-- URLクエリ - さまざまな情報をWebサーバーに伝えるためにURLに付け加える情報 -->
           <!-- URLクエリ - 「?」+「変数名」+「=」+「変数の値」というのが、基本構造 -->
           <!-- クエリ - 検索を行う際の検索条件のこと 一般に、データベースや表で何らかの検索をおこなう場合
@@ -38,7 +37,7 @@ require('functions.php');
           </td>
           <td>
             <form action="store.php" method="POST">
-              <input type="hidden" name="id" value="<?php echo $todo['id'] ?>">
+              <input type="hidden" name="id" value="<?php echo h($todo['id']) ?>">
               <input type="hidden" name="type" value="delete">
               <button type="submit">削除</button>
             </form>

@@ -2,8 +2,40 @@
 //画面側にデータを渡す
 
 require('connection.php');
+session_start();//SESSIONを使用すると宣言
+
+//エスケープ処理
+function h($s) {//フォームから送られてきた値や、データベースから取り出した値をブラウザ上に表示する際に使用
+  return htmlspecialchars($s, ENT_QUOTES, "UTF-8");
+}
+
+//sessionに暗号化したtokenを入れる
+function setToken() {//setToken - tokenをsessionに保存している
+  $token = sha1(uniqid(mt_rand(),true));
+  //sha1 - 文字列の sha1 ハッシュを計算する
+  //uniqid - 一意な ID を生成する
+  $_SESSION['token'] = $token;//IDを代入
+}
+
+//sessionのチェックを行いcsrf対策を行う
+function checkToken($data) {
+  if (empty($_SESSION['token'])|| ($_SESSION['token'] != $data)){
+    $_SESSION['err'] = '不正な操作です';
+    header('location: '.$_SERVER['HTTP_REFERER'].'');
+    exit();
+  }
+  return true;
+}
+
+function unsetSession() {
+  if(!empty($_SESSION['err'])) $_SESSION['err'] = '';
+  //empty — 変数が空であるかどうかを検査する
+}
+
 function create($data) {
-  insertDb($data['todo']);
+  if(checkToken($data['token'])){
+    insertDb($data['todo']);
+  }
 }
 
 //全県取得
@@ -14,7 +46,9 @@ function index() {
 
 // 更新
 function update($data) {
-  updateDb($data['id'],$data['todo']);
+  if(checkToken($data['token'])) {
+    updateDb($data['id'], $data['todo']);
+  }
 }
 //update関数とdetail関数でそれぞれ必要となるデータを渡している
 
