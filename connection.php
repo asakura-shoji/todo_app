@@ -82,13 +82,15 @@ function deleteDb($id) {
 }
 
 // if(!empty($_POST["username"]) && !empty($_POST["password"])){
-function loginInsertDb($data) {
+function UserInfo($data) {
+  $hash = password_hash($data['password'], PASSWORD_DEFAULT);
+  //ハッシュ値生成
   $dbh = connectPdo();
   $sql = 'INSERT INTO login (username, password) VALUES (:username, :password)';//INSERT INTO - テーブルにデータを追加する
   //プリペアドステートメント - 実行したい SQL をコンパイルした 一種のテンプレートのようなも
   $stmt = $dbh->prepare($sql);//値部分にパラメータを付けて準備状態。文オブジェクトを返す
   $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
-  $stmt->bindParam(':password', $data['password'], PDO::PARAM_STR);
+  $stmt->bindParam(':password', $hash, PDO::PARAM_STR);
   //bindParam - 一個目はパラメータを指定。二個目にそれに入れる変数。三個目に型を指定。
   //PDO::PARAM_STR は「文字列」
   $stmt->execute();//準備したprepareに入っているSQL文を実行

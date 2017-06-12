@@ -1,4 +1,7 @@
-
+<?php
+require('functions.php');
+unsetSession();
+?>
 <!DOCTYPE html>
 <html>
   <head>

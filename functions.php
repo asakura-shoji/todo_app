@@ -114,9 +114,13 @@ function detail($id) {
 function register($data) {
   if(!empty($data["username"]) && !empty($data["password"])){
     $login = loginDb($data);
-    if($login['username'] === NULL){//DBに入っていないなら
-      loginInsertDb($data);
-      loginDb($data);
+    if($login['username'] === NULL && $login['password'] === NULL){//DBに入っていないなら
+      UserInfo($data);
+      // loginDb($data);//修正
+      $_SESSION['username'] = $data['username'];
+      // var_dump($data);
+      // exit;
+
       header('Location: index.php');
       exit;
     }else{
@@ -129,7 +133,8 @@ function register($data) {
 function login($data) {
   $login = loginDb($data);
 
-  if($login['username'] === $data['username'] && $login['password'] === $data['password']){
+  if($login['username'] === $data['username'] && password_verify($data['password'], $login['password'])){
+    //password_verify - 登録されているハッシュと入力が合っているかチェックする
     header('Location: index.php');
     exit;
   }else{
