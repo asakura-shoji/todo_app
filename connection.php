@@ -19,7 +19,7 @@ function insertDb($data) {
   $dbh = connectPdo();
   $sql = 'INSERT INTO todos (todo) VALUES (:todo)';//INSERT INTO - テーブルにデータを追加する
   //プリペアドステートメント - 実行したい SQL をコンパイルした 一種のテンプレートのようなも
-  $stmt = $dbh->prepare($sql);//値部分にパラメータを付けて実行待ち
+  $stmt = $dbh->prepare($sql);//値部分にパラメータを付けて準備状態。文オブジェクトを返す
   $stmt->bindParam(':todo', $data, PDO::PARAM_STR);
   //bindParam - 一個目はパラメータを指定。二個目にそれに入れる変数。三個目に型を指定。
   //PDO::PARAM_STR は「文字列」
@@ -29,9 +29,14 @@ function insertDb($data) {
 //データ全件取得の記述
 function selectAll() {
   $dbh = connectPdo();
-  $sql = 'SELECT * FROM todos WHERE deleted_at IS NULL';//データの取得
+  $sql = 'SELECT * FROM todos WHERE deleted_at IS NULL';
+  //* - カラム全部
+  //SELECT文 - データベースのテーブルからデータを検索し、取得する
+  //論理削除対応をしたテーブルは deleted_at というカラムが必要.
+  //IS NULL演算子はデータがNULLなら真を，データがNULLでないのなら偽を返します．IS
   $todo =array();
-  foreach($dbh->query($sql) as $row) {//配列を作成
+  foreach($dbh->query($sql) as $row) {
+    //query - SQL ステートメントを実行し、結果セットを PDOStatement オブジェクトとして返す
     array_push($todo, $row);//配列の最後に追加
   }
   return $todo;//制作した＄todoを返す。
@@ -41,6 +46,7 @@ function selectAll() {
 function updateDb($id, $data) {
   $dbh = connectPdo();
   $sql = 'UPDATE todos SET todo = :todo WHERE id = :id';//更新
+  //更新するレコードを選択してるだけ
   //WHEREの後に条件式で指定したものだけを選出できる
   //UPDATE table名 SET カラム名 = 格納する値 where カラム名 = 値
   $stmt = $dbh->prepare($sql);
@@ -56,6 +62,7 @@ function getSelectData($id) {
   $sql = 'SELECT todo FROM todos WHERE id = :id AND deleted_at IS NULL';
   //deleted_atの値がnullでない項目を含めるように指定
   //削除しているかどうかも条件に入れている。
+
   $stmt = $dbh->prepare($sql);
   $stmt->execute(array(':id' => (int)$id));
   //「execute」メソッドを実行するSQL文に引数があった場合(後で値を指定するために「?」や名前付きパラメータを
@@ -72,6 +79,33 @@ function deleteDb($id) {
   $stmt->bindParam(':deleted_at', $nowTime);
   $stmt->bindValue(':id', $id, PDO::PARAM_INT);
   $stmt->execute();
+}
+
+// if(!empty($_POST["username"]) && !empty($_POST["password"])){
+function loginInsertDb($data) {
+  $dbh = connectPdo();
+  $sql = 'INSERT INTO login (username, password) VALUES (:username, :password)';//INSERT INTO - テーブルにデータを追加する
+  //プリペアドステートメント - 実行したい SQL をコンパイルした 一種のテンプレートのようなも
+  $stmt = $dbh->prepare($sql);//値部分にパラメータを付けて準備状態。文オブジェクトを返す
+  $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+  $stmt->bindParam(':password', $data['password'], PDO::PARAM_STR);
+  //bindParam - 一個目はパラメータを指定。二個目にそれに入れる変数。三個目に型を指定。
+  //PDO::PARAM_STR は「文字列」
+  $stmt->execute();//準備したprepareに入っているSQL文を実行
+}
+
+function loginDb($data) {
+  $dbh = connectPdo();
+  $sql = 'SELECT * FROM login WHERE username = :username';
+  //SELECT文 - データベースのテーブルからデータを検索し、取得する
+  //* - 全ての列のデータを
+  $stmt = $dbh->prepare($sql);
+  $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+  $stmt->execute();
+  $res = $stmt->fetch();//結果セットから次の行を取得する
+  $_SESSION['username'] = $res['username'];
+  //$_SESSIONというセッション変数に$res['username']を格納
+  return $res;
 }
 
  ?>

@@ -1,7 +1,8 @@
 <?php
 require_once('functions.php');
 setToken();
-$data = detail($_GET['id']);//URLクエリのデータを取得しそれをそのままfunctions.phpのdetail関数に渡してる
+$data = detail($_GET['id']);
+//URLクエリのデータを取得しそれをそのままfunctions.phpのdetail関数に渡してる
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -14,6 +15,7 @@ $data = detail($_GET['id']);//URLクエリのデータを取得しそれをそ�
       <p><?php echo $_SESSION['err'] ?></p>
     <?php endif; ?>
     <form action="store.php" method="post">
+      <!--フォームに入力されたデータは、送信ボタンを押すことでウェブサーバーへ送信されます-->
       <input type="hidden" name="token" value="<?php echo h($_SESSION['token']); ?>">
       <input type="hidden" name="id" value="<?php echo h($_GET['id']) ?>">
       <input type="text" name="todo" value="<?php echo h($data) ?>">

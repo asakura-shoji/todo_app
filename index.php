@@ -1,6 +1,14 @@
 <?php
 require('functions.php');
 unsetSession();
+
+if(!isset($_SESSION['username'])){
+	//isset( $_SESSION[ キー ] ) - isset()関数は、指定したセッション変数が設定されている場合は、
+	//TRUE、設定されてない場合はFALSEを返す
+	session_start();
+	header('Location: login.php');
+	exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -10,12 +18,18 @@ unsetSession();
   <title>Home</title>
 </head>
 <body>
+	<header>
+		<a href="logout.php">
+			<p>ログアウト</p>
+		</a>
+	</header>
   <div>
     <a href="new.php">
       <p>新規作成</p>
     </a>
   </div>
   <div>
+
     <table>
       <tr>
         <th>ID</th>
@@ -36,6 +50,7 @@ unsetSession();
           </td>
           <td>
             <form action="store.php" method="POST">
+              <!--送信された値は$_POSTに配列で入ってきます。キーはinputのname属性の値-->
               <input type="hidden" name="id" value="<?php echo h($todo['id']) ?>">
               <input type="hidden" name="type" value="delete">
               <button type="submit">削除</button>

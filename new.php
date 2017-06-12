@@ -10,10 +10,11 @@ setToken();
   <title>新規作成</title>
 </head>
   <body>
-  <?php if(isset($_SESSION['err'])): ?>
+  <?php if(isset($_SESSION['err'])): ?><!-- -->
    <p><?php echo $_SESSION['err'] ?></p>
   <?php endif; ?>
     <form action="store.php" method="POST">
+      <!--送信された値は$_POSTに配列で入ってきます。キーはinputのname属性の値です -->
       <input type="hidden" name="token" value="<?php echo h($_SESSION['token']);?>">
       <input type="text" name="todo">
       <input type="submit" value="作成">
